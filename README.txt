@@ -1,0 +1,56 @@
+===========================================
+==========DOI meta-data retriever==========
+===========================================
+==================Python===================
+===========================================
+===============By Bingyin Hu===============
+===========================================
+1. System preparation
+===========================================
+Required packages:
+>>> Beautiful Soup 4
+    doc: https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html
+>>> os
+    Python default package
+>>> mechanize
+    https://github.com/sparklemotion/mechanize
+    "Mechanize is a ruby library that makes automated web interaction easy."
+    Used here to fetch information from websites.
+>>> ast
+    Python default package
+    Used here to turn a string expression into a dictionary
+>>> datetime
+    Python default package
+    Used here to log in the date of citation
+===========================================
+2. How to use
+===========================================
+In python environment:
+>>>from doiretriever import mainDOI
+>>>doi = "10.1021/acsmacrolett.7b00603"
+>>>output = mainDOI(doi)
+then the information will be saved in a dictionary, returned, and get by output.
+===========================================
+3. Others
+===========================================
+Checklist for adding a new journal site
+>>> add a default dictionary with the mapping of meta data names
+>>> add an accurate search term into getPublisher(url)
+>>> add a blurry search term into getPublisher(url)
+>>> determine which of "soup_only", "txt_only", or "soup_txt_mix" that the journal belongs to, add it in
+>>> add the journal into collectMeta(doi, url, publisher), mimic an analogue journal
+>>> add the data fetching method for the journal (e.g. wileyMeta(metas, doi), rscMeta(metas, doi) etc.)
+
+===========================================
+09/28/2017
+Tests passed for Wiley and RSC journal papers.
+09/29/2017
+Tests passed for Elsevier journal papers.
+09/30/2017
+Tests passed for AIP and APS journal papers.
+10/01/2017
+Tests passed for ACS journal papers and IEEE journal and conference papers.
+10/02/2017
+Tests passed for Nature Publishing Group journal papers.
+Note: IOP Publishing does not allow crawling, returns HTTP Error 403: Forbidden
+
