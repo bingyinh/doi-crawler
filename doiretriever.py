@@ -640,10 +640,10 @@ def tfMeta(soup, doi, url):
         if ("class" in tagSpan.attrs):
             if (type(tagSpan["class"]) == list):
                 if ("overlay" in tagSpan["class"]):
-                    outputDict["Institution"].append(tagSpan.contents[0])
+                    outputDict["Institution"].append(tagSpan.contents[0].strip())
             if (type(tagSpan["class"]) == unicode):
                 if (tagSpan["class"] == "overlay"):
-                    outputDict["Institution"].append(tagSpan.contents[0])
+                    outputDict["Institution"].append(tagSpan.contents[0].strip())
     outputDict["Institution"] = noDup(outputDict["Institution"])
     # Volume and Issue are parsed from <meta property="og:description" ...>
     metas = soup.find_all("meta")
@@ -1125,7 +1125,8 @@ if __name__ == "__main__":
 ##    testDOI = "10.1177/0021998316644846" # sage test 1 PASS
 ##    testDOI = "10.1177/0021998316644847" # sage test 2 PASS
 ##    testDOI = "10.1063/1.4960137"
-    testDOI = "10.1038/nnano.2008.96"
+##    testDOI = "10.1038/nnano.2008.96"
+    testDOI = "10.1016/j.polymer.2009.08.038"
     testDict = mainDOI(testDOI)
     for key in testDict:
         print key + " : " + str(testDict[key])
