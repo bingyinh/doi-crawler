@@ -418,10 +418,25 @@ def elsevierMeta(soup, txt, doi, url):
     outputDict["Institution"] = noDup(outputDict["Institution"])
 
     # Keyword
-    keyword = txtDigger(txt,
-                        '''{"#name":"keyword","$$":[{"#name":"text","_":''', '')
-    for x in xrange(len(keyword)):
-        outputDict["Keyword"].append(keyword[x])
+    keywords = txtDigger(txt,
+                         '''{"#name":"keyword","$$":[{"#name":"text","_":''', '')
+    for x in xrange(len(keywords)):
+        # some Elsevier journals have keywords starting with "A. ", "B. ", etc.
+        pre = keywords[x].split(" ")[0]
+        if len(pre) == 2 and pre[1] == "." and pre[0].isupper():
+            keywords[x] = keywords[x][3:]
+        outputDict["Keyword"].append(keywords[x])
+    # Keyword method 2 using soup
+    tagDivs = soup.find_all("div")
+    for tagDiv in tagDivs:
+        if "class" in tagDiv.attrs:
+            if "keyword" in tagDiv["class"]:
+                keyword = tagDiv.text
+                # some Elsevier journals have keywords starting with "A. ", "B. ", etc.
+                pre = keyword.split(" ")[0]
+                if len(pre) == 2 and pre[1] == "." and pre[0].isupper():
+                    keyword = keyword[3:]
+                outputDict["Keyword"].append(keyword)
     # now eliminate duplicate names
     outputDict["Keyword"] = noDup(outputDict["Keyword"])
 
@@ -722,6 +737,14 @@ def tfMeta(soup, doi, url):
 # springer
 def springerMeta(soup, doi, url):
     outputDict = makeMetaDict(doi)
+    # Keywords in tag <span class="Keyword">
+    tagSpans = soup.find_all("span")
+    for tagSpan in tagSpans:
+        if "class" in tagSpan.attrs:
+            if "Keyword" in tagSpan["class"]:
+                outputDict["Keyword"].append(tagSpan.text.strip())
+    # remove duplicates
+    outputDict["Keyword"] = noDup(outputDict["Keyword"])
     # URL is put manually
     outputDict["URL"] = [url]
 
@@ -1224,7 +1247,7 @@ if __name__ == "__main__":
 ##    testDOI = "10.1038/nnano.2008.96"
 ##    testDOI = "10.1063/1.3487275" # aip test 3, PASS
 ##    testDOI = "10.1088/1757-899X/73/1/012015" # iop test 1 PASS
-    testDOI = "10.1109/TDEI.2013.004165"
+    testDOI = "10.1007/s10853-006-0331-1"
     testDict = mainDOI(testDOI)
     for key in testDict:
         print key + " : " + str(testDict[key])
