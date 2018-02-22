@@ -12,7 +12,7 @@ from datetime import date # for logging the Date of Citation
 
 # can collect all meta datas we need by bs4 package
 soup_only = ["wiley", "rsc", "aip", "acs", "aps", "nature",
-             "tf", "springer", "sage", "aiaa", "mdpi"] 
+             "tf", "springer", "sage", "aiaa", "mdpi", "iop"] 
 txt_only = ["ieee"] # bs4 package down, use the old-fashioned way
 soup_txt_mix = ["elsevier"] # some data not retrievable by bs4
 
@@ -48,11 +48,12 @@ elsevier = {"Publication": "citation_journal_title",
 aip      = {"Publication": "citation_journal_title",
             "Title": "dc.Title",
             "Author": "dc.Creator",
-            "Keyword": "keywords",
+            "Keyword": ["keywords", "citation_keywords"],
             "Publisher": "dc.Publisher",
             "PublicationYear": "dc.Date",
-            "Volume": "dc.volume",
-            "Issue": "dc.issue"}
+            "ISSN": "citation_issn",
+            "Volume": ["dc.volume", "citation_volume"],
+            "Issue": ["dc.issue", "citation_issue"]}
 acs      = {"Title": "dc.Title",
             "Author": "dc.Creator",
             "Publisher": "dc.Publisher",
@@ -434,17 +435,33 @@ def aipMeta(soup, doi, url):
             if ('''/author/''' in tagA["href"]):
                 outputDict["Author"].append(tagA.string.strip())
     # Institution    
-    tagSpans = soup.find_all("span")
-    institution = getTagStringFromSoup(tagAs, "institution", "class")
-    country = getTagStringFromSoup(tagSpans, "country", "class")
-    # assemble the insitution and the country into outputDict
-    if (len(institution) == len(country)):
-        for x in xrange(len(institution)):
-            outputDict["Institution"].append(institution[x] + ", " +
-                                             country[x])
-    if (len(country) == 0):
-        for x in xrange(len(institution)):
-            outputDict["Institution"].append(institution[x])
+##    tagSpans = soup.find_all("span")
+##    institution = getTagStringFromSoup(tagAs, "institution", "class")
+##    country = getTagStringFromSoup(tagSpans, "country", "class")
+##    # assemble the insitution and the country into outputDict
+##    if (len(institution) == len(country)):
+##        for x in xrange(len(institution)):
+##            outputDict["Institution"].append(institution[x] + ", " +
+##                                             country[x])
+##    if (len(country) == 0):
+##        for x in xrange(len(institution)):
+##            outputDict["Institution"].append(institution[x])
+    tagDivs = soup.find_all("div")
+    for tagDiv in tagDivs:
+        if ("class" in tagDiv.attrs):
+            if ("affiliations-list" in tagDiv["class"]):
+                inst = tagDiv # save the right <div></div> pair
+    # chop off the email
+    inststr = str(inst)[0:str(inst).find('<p class="first last">')]
+    # remove the extra brackets and attributes
+    inststr = bracketRemove(inststr, ' ')
+    # split by two spaces (careful!!!)
+    institutions_raw = inststr.split("  ")
+    # save the non-empty string to outputDict
+    for institution_raw in institutions_raw:
+        if institution_raw.strip() != '':
+            outputDict["Institution"].append(institution_raw.strip())
+    
     # eliminate duplicates
     outputDict["Institution"] = noDup(outputDict["Institution"])
     
@@ -1040,10 +1057,17 @@ def getTagStringFromSoup(tags, myID, pageID):
 # find the meta data in the soup instance created by bs4 package
 def getMetaFromSoup(metas, name):
     output = []
-    for meta in metas:
-        if ("name" in meta.attrs):
-            if (meta["name"] == name):
-                output.append(bracketRemove(meta["content"].strip(), ""))
+    if type(name) == list:
+        for nm in name:
+            for meta in metas:
+                if ("name" in meta.attrs):
+                    if (meta["name"] == nm):
+                        output.append(bracketRemove(meta["content"].strip(), ""))
+    else:
+        for meta in metas:
+            if ("name" in meta.attrs):
+                if (meta["name"] == name):
+                    output.append(bracketRemove(meta["content"].strip(), ""))
     output = noDup(output)
     return output
     
@@ -1111,7 +1135,7 @@ if __name__ == "__main__":
 ##    testDOI = "10.1039/C5CS00258C" # rsc test PASS
 ##    testDOI = "10.1016/j.compositesa.2004.12.010" # elsevier test PASS
 ##    testDOI = "10.1063/1.4892695" # aip test 1 PASS
-##    testDOI = "10.1063/1.4994293" # aip test 2, multiple institutions, PASS
+    testDOI = "10.1063/1.4994293" # aip test 2, multiple institutions, PASS
 ##    testDOI = "10.1021/ja963361g" # acs test 1, PASS
 ##    testDOI = "10.1021/acs.macromol.5b01573" # acs test 2, macromol, multiple institutions, PASS
 ##    testDOI = "10.1021/acsmacrolett.7b00603" # acs test 3, macrolett
@@ -1126,7 +1150,8 @@ if __name__ == "__main__":
 ##    testDOI = "10.1177/0021998316644847" # sage test 2 PASS
 ##    testDOI = "10.1063/1.4960137"
 ##    testDOI = "10.1038/nnano.2008.96"
-    testDOI = "10.1016/j.polymer.2009.08.038"
+##    testDOI = "10.1063/1.3487275" # aip test 3, PASS
+    testDOI = "10.1088/1757-899X/73/1/012015"
     testDict = mainDOI(testDOI)
     for key in testDict:
         print key + " : " + str(testDict[key])
