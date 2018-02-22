@@ -1190,6 +1190,10 @@ def mainDOI(doi):
     # extract year from date
     if (myDict["PublicationYear"] != []):
         myDict["PublicationYear"] = [yearFromDate(myDict["PublicationYear"][0])]
+    # replace &amp; with & in Institutions
+    for i in xrange(len(myDict["Institution"])):
+        if "&amp;" in myDict["Institution"][i]:
+            myDict["Institution"][i] = myDict["Institution"][i].replace('&amp;','&')
 ##    for key in myDict:
 ##        print key + " : " + str(myDict[key])
 ##        print "==============================================="
@@ -1220,7 +1224,7 @@ if __name__ == "__main__":
 ##    testDOI = "10.1038/nnano.2008.96"
 ##    testDOI = "10.1063/1.3487275" # aip test 3, PASS
 ##    testDOI = "10.1088/1757-899X/73/1/012015" # iop test 1 PASS
-    testDOI = "10.1557/mrs2007.232"
+    testDOI = "10.1109/TDEI.2013.004165"
     testDict = mainDOI(testDOI)
     for key in testDict:
         print key + " : " + str(testDict[key])
