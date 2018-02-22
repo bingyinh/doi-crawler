@@ -11,8 +11,8 @@ from datetime import date # for logging the Date of Citation
 ### some publishers partially support bs4 and others do not.
 
 # can collect all meta datas we need by bs4 package
-soup_only = ["wiley", "rsc", "aip", "acs", "aps", "nature",
-             "tf", "springer", "sage", "aiaa", "mdpi", "iop"] 
+soup_only = ["wiley", "rsc", "aip", "acs", "aps", "nature", "tf", "springer",
+             "sage", "aiaa", "mdpi", "iop"] 
 txt_only = ["ieee"] # bs4 package down, use the old-fashioned way
 soup_txt_mix = ["elsevier"] # some data not retrievable by bs4
 
@@ -106,6 +106,14 @@ mdpi     = {"Publication": "citation_journal_title",
             "PublicationYear": "citation_date",
             "Volume": "citation_volume",
             "Issue": "citation_issue"}
+iop      = {"Publication": "citation_journal_title",
+            "Title": "citation_title",
+            "Author": "citation_author",
+            "Publisher": "citation_publisher",
+            "PublicationYear": "citation_online_date",
+            "Volume": "citation_volume",
+            "ISSN": "citation_issn",
+            "Issue": "citation_issue"}
 general  = {"Publication": ["citation_journal_title", "prism.publicationName"],
             "Title": ["citation_title", "DC.Title", "dc.Title", "title"],
             "Author": ["citation_author", "dc.Creator", "DC.Contributor",
@@ -180,6 +188,9 @@ def getPublisher(url):
     # Molecular Diversity Preservation International
     if ("mdpi.com" in url.lower()):
         return "mdpi"
+    # Institute of Physics (IOP)
+    if ("iopscience.iop.org" in url.lower()):
+        return "iop"
     
     # Followed by blurry search
     # Wiley
@@ -221,6 +232,9 @@ def getPublisher(url):
     # Molecular Diversity Preservation International
     if ("mdpi" in url.lower()):
         return "mdpi"
+    # Institute of Physics (IOP)
+    if ("iop" in url.lower()):
+        return "iop"
     
     # unspecified publisher
     return "unknown"
@@ -313,7 +327,11 @@ def collectMeta(doi, url, publisher):
         if (publisher == "mdpi"):
             outputDict = mdpiMeta(soup, doi, url)
             return outputDict
-    
+        # iop
+        if (publisher == "iop"):
+            outputDict = iopMeta(soup, doi, url)
+            return outputDict
+        
     # Option 2: partially use bs4 package and old-fashioned txt crawling
     if (publisher in soup_txt_mix):
         soup = fetchSoupByURL(url)
@@ -423,9 +441,6 @@ def elsevierMeta(soup, txt, doi, url):
 # aip
 def aipMeta(soup, doi, url):
     outputDict = makeMetaDict(doi)
-    # Institution needs to be obtained from
-    # tag "a" in soup with class="affiliations"
-    # Countries of the institutions from tag "span" with class="country"
     # Some cases dc.Creator does not have all the authors, e.g. 10.1063/1.4959771
     # need to be extracted from <a href="/author/
     # Author
@@ -434,7 +449,7 @@ def aipMeta(soup, doi, url):
         if ("href" in tagA.attrs):
             if ('''/author/''' in tagA["href"]):
                 outputDict["Author"].append(tagA.string.strip())
-    # Institution    
+    # Institution (outdated version)
 ##    tagSpans = soup.find_all("span")
 ##    institution = getTagStringFromSoup(tagAs, "institution", "class")
 ##    country = getTagStringFromSoup(tagSpans, "country", "class")
@@ -446,22 +461,32 @@ def aipMeta(soup, doi, url):
 ##    if (len(country) == 0):
 ##        for x in xrange(len(institution)):
 ##            outputDict["Institution"].append(institution[x])
+    # Institution (latest version)
+    inst = '' # initialize inst
     tagDivs = soup.find_all("div")
     for tagDiv in tagDivs:
         if ("class" in tagDiv.attrs):
-            if ("affiliations-list" in tagDiv["class"]):
+            if ("affiliations-list" in str(tagDiv["class"])):
                 inst = tagDiv # save the right <div></div> pair
-    # chop off the email
-    inststr = str(inst)[0:str(inst).find('<p class="first last">')]
-    # remove the extra brackets and attributes
-    inststr = bracketRemove(inststr, ' ')
-    # split by two spaces (careful!!!)
-    institutions_raw = inststr.split("  ")
-    # save the non-empty string to outputDict
-    for institution_raw in institutions_raw:
-        if institution_raw.strip() != '':
-            outputDict["Institution"].append(institution_raw.strip())
-    
+    if inst != '':
+        # chop off the email
+        inststr = str(inst)[0:str(inst).find('<p class="first last">')]
+        # remove the extra brackets and attributes
+        inststr = bracketRemove(inststr, ' ')
+        # split by two spaces (careful!!!)
+        institutions_raw = inststr.split("  ")
+        # save the non-empty string to outputDict
+        for institution_raw in institutions_raw:
+            if institution_raw.strip() != '':
+                outputDict["Institution"].append(institution_raw.strip())
+    else:
+        # try looking for inst in <li class="author-affiliation">
+        tagLis = soup.find_all("li")
+        for tagLi in tagLis:
+            if ("class" in tagLi.attrs):
+                if ("author-affiliation" in str(tagLi["class"])):
+                    outputDict["Institution"].append(tagLi.text.strip())
+
     # eliminate duplicates
     outputDict["Institution"] = noDup(outputDict["Institution"])
     
@@ -840,6 +865,49 @@ def mdpiMeta(soup, doi, url):
 
     return outputDict
 
+# iop
+def iopMeta(soup, doi, url):
+    outputDict = makeMetaDict(doi)
+    tagAs = soup.find_all("a")
+    for tagA in tagAs:
+        if ("href" in tagA.attrs):
+            if ('''/author/''' in tagA["href"]):
+                outputDict["Author"].append(tagA.string.strip())
+    # Institution    
+    tagDivs = soup.find_all("div")
+    for tagDiv in tagDivs:
+        if ("class" in tagDiv.attrs):
+            if ("affiliations" in str(tagDiv["class"])):
+                inst = tagDiv # save the right <div></div> pair
+    # each institution is saved in tag p
+    insts = inst.find_all("p")
+    # loop through all institutions
+    for institution in insts:
+        # convert to string
+        inststr = str(institution)
+        # remove whatever between brackets and <sup></sup>'s
+        inststr = bracketRemove(inststr, ' ')
+        # save to outputDict
+        outputDict["Institution"].append(inststr.strip())
+    
+    # eliminate duplicates
+    outputDict["Institution"] = noDup(outputDict["Institution"])
+    
+    # URL is put manually
+    outputDict["URL"] = [url]
+
+    # Now let's get whatever we can from soup
+    metas = soup.find_all("meta")
+    for key in iop:
+        assert(key in outputDict)
+        outputDict[key] += getMetaFromSoup(metas, iop[key])
+        outputDict[key] = noDup(outputDict[key])
+
+    # Switch the first name and last name format
+    outputDict["Author"] = nameLastFirst(outputDict["Author"])
+    
+    return outputDict
+
             
 # ieee
 def ieeeMeta(txt, doi, url):
@@ -1135,7 +1203,7 @@ if __name__ == "__main__":
 ##    testDOI = "10.1039/C5CS00258C" # rsc test PASS
 ##    testDOI = "10.1016/j.compositesa.2004.12.010" # elsevier test PASS
 ##    testDOI = "10.1063/1.4892695" # aip test 1 PASS
-    testDOI = "10.1063/1.4994293" # aip test 2, multiple institutions, PASS
+##    testDOI = "10.1063/1.4994293" # aip test 2, multiple institutions, PASS
 ##    testDOI = "10.1021/ja963361g" # acs test 1, PASS
 ##    testDOI = "10.1021/acs.macromol.5b01573" # acs test 2, macromol, multiple institutions, PASS
 ##    testDOI = "10.1021/acsmacrolett.7b00603" # acs test 3, macrolett
@@ -1151,7 +1219,8 @@ if __name__ == "__main__":
 ##    testDOI = "10.1063/1.4960137"
 ##    testDOI = "10.1038/nnano.2008.96"
 ##    testDOI = "10.1063/1.3487275" # aip test 3, PASS
-    testDOI = "10.1088/1757-899X/73/1/012015"
+##    testDOI = "10.1088/1757-899X/73/1/012015" # iop test 1 PASS
+    testDOI = "10.1557/mrs2007.232"
     testDict = mainDOI(testDOI)
     for key in testDict:
         print key + " : " + str(testDict[key])

@@ -5,6 +5,10 @@
 ===========================================
 ===============By Bingyin Hu===============
 ===========================================
+Designed for publishing groups including:
+Wiley, RSC, AIP, ACS, APS, Nature, Taylor & Francis, Springer, Sage, AIAA, MDPI, IOP
+Also compatible for other publishing groups whose websites follow standard meta info formatting.
+===========================================
 1. System preparation
 ===========================================
 Required packages:
@@ -38,7 +42,7 @@ Checklist for adding a new journal site
 >>> add an accurate search term into getPublisher(url)
 >>> add a blurry search term into getPublisher(url)
 >>> determine which of "soup_only", "txt_only", or "soup_txt_mix" that the journal belongs to, add it in
->>> add the journal into collectMeta(doi, url, publisher), mimic an analogue journal
+>>> add the journal into collectMeta(doi, url, publisher), follow the convention of other journals
 >>> add the data fetching method for the journal (e.g. wileyMeta(metas, doi), rscMeta(metas, doi) etc.)
 
 ===========================================
@@ -51,6 +55,7 @@ Tests passed for AIP and APS journal papers.
 10/01/2017
 Tests passed for ACS journal papers and IEEE journal and conference papers.
 10/02/2017
-Tests passed for Nature Publishing Group journal papers.
-Note: IOP Publishing does not allow crawling, returns HTTP Error 403: Forbidden
+Tests passed for Nature, Springer, T&F, Sage, AIAA journal papers and MDPI logged papers.
+02/22/2017
+Tests passed for IOP Publishing, AIP modules are updated according to a recent update of the website formatting.
 
