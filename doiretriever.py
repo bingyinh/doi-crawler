@@ -88,8 +88,8 @@ springer = {"Publication": "citation_journal_title",
             "PublicationYear": "citation_online_date",
             # some springer paper use "citation_cover_date"
             "Volume": "citation_volume",
-            "URL": "citation_abstract_html_url",
-            "Institution": "citation_author_institution",
+##            "URL": "citation_abstract_html_url",
+##            "Institution": "citation_author_institution",
             "ISSN": "citation_issn",
             "Issue": "citation_issue"}
 sage     = {"Publication": "citation_journal_title",
@@ -423,7 +423,7 @@ def elsevierMeta(soup, txt, doi, url):
     for x in xrange(len(keywords)):
         # some Elsevier journals have keywords starting with "A. ", "B. ", etc.
         pre = keywords[x].split(" ")[0]
-        if len(pre) == 2 and pre[1] == "." and pre[0].isupper():
+        if len(pre) == 2 and pre[1] == "." and (pre[0].isupper() or pre[0].isdigit()):
             keywords[x] = keywords[x][3:]
         outputDict["Keyword"].append(keywords[x])
     # Keyword method 2 using soup
@@ -434,7 +434,7 @@ def elsevierMeta(soup, txt, doi, url):
                 keyword = tagDiv.text
                 # some Elsevier journals have keywords starting with "A. ", "B. ", etc.
                 pre = keyword.split(" ")[0]
-                if len(pre) == 2 and pre[1] == "." and pre[0].isupper():
+                if len(pre) == 2 and pre[1] == "." and (pre[0].isupper() or pre[0].isdigit()):
                     keyword = keyword[3:]
                 outputDict["Keyword"].append(keyword)
     # now eliminate duplicate names
@@ -745,6 +745,29 @@ def springerMeta(soup, doi, url):
                 outputDict["Keyword"].append(tagSpan.text.strip())
     # remove duplicates
     outputDict["Keyword"] = noDup(outputDict["Keyword"])
+    # Institutions (more info in tag <ol class="test-affiliations">
+    institution = ''
+    tagOls = soup.find_all("ol")
+    for tagOl in tagOls:
+        if "class" in tagOl.attrs:
+            if "test-affiliations" in tagOl["class"]:
+                institution = tagOl.find_all("li")
+    if institution != '':
+        for inst in institution:
+            instStrAll = str(inst)
+            # remove those tags in the brackets and split by "  " (careful!!!)
+            instStrs = bracketRemove(instStrAll, " ").split("  ")
+            instStrNew = ''
+            for instStr in instStrs:
+                if instStr.strip() == '':
+                    continue
+                if len(instStr) == 2 and instStr[1] == "." and (instStr[0].isupper() or instStr[0].isdigit()):
+                    continue
+                instStrNew += instStr.strip() + ", "
+            outputDict["Institution"].append(instStrNew.strip(", "))
+    # eliminate duplicates in Institution
+    outputDict["Institution"] = noDup(outputDict["Institution"])
+
     # URL is put manually
     outputDict["URL"] = [url]
 
@@ -752,8 +775,8 @@ def springerMeta(soup, doi, url):
     metas = soup.find_all("meta")
     for key in springer:
         assert(key in outputDict)
-        outputDict[key] = getMetaFromSoup(metas, springer[key])
-
+        outputDict[key] += getMetaFromSoup(metas, springer[key])
+    
     if (outputDict["PublicationYear"] == []):
         outputDict["PublicationYear"] = getMetaFromSoup(metas,
                                                         "citation_cover_date")
@@ -1247,7 +1270,7 @@ if __name__ == "__main__":
 ##    testDOI = "10.1038/nnano.2008.96"
 ##    testDOI = "10.1063/1.3487275" # aip test 3, PASS
 ##    testDOI = "10.1088/1757-899X/73/1/012015" # iop test 1 PASS
-    testDOI = "10.1007/s10853-006-0331-1"
+    testDOI = "10.1007/s10853-015-9698-1"
     testDict = mainDOI(testDOI)
     for key in testDict:
         print key + " : " + str(testDict[key])
