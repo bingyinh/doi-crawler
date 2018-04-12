@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import os
 import mechanize
 import ast
+import collections
 from datetime import date # for logging the Date of Citation
 ### This script is used to retrieve meta datas based on the input doi string.
 ### Different publisher have different meta data format embedded in their sites,
@@ -1188,11 +1189,12 @@ def getMetaFromSoup(metas, name):
 # initialize a dictionary to map all meta datas
 # DOI is loaded into the dictionary at the time of creation
 def makeMetaDict(doi):
-    pairs = [("Publication", []), ("Title", []), ("PublicationYear", []),
-             ("Volume", []), ("Issue", []), ("URL", []), ("ISSN", []), 
-             ("DOI", [doi]), ("Author", []), ("Institution", []),
-             ("Keyword", []), ("Publisher", []), ("DateOfCitation", [])]
-    metaDict = dict(pairs) # initialize the dictionary
+    pairs = [("Publication", []), ("Title", []), ("Author", []), ("Keyword", []), 
+             ("Publisher", []), ("PublicationYear", []), ("DOI", [unicode(doi)]), 
+             ("Volume", []), ("URL", []), ("Language", [u'English']),
+             ("Institution", []), ("DateOfCitation", []),
+             ("ISSN", []), ("Issue", [])]
+    metaDict = collections.OrderedDict(pairs) # initialize the dictionary
     return metaDict
 
 # eliminate duplicate in a python list with preserved order
@@ -1269,8 +1271,8 @@ if __name__ == "__main__":
 ##    testDOI = "10.1063/1.4960137"
 ##    testDOI = "10.1038/nnano.2008.96"
 ##    testDOI = "10.1063/1.3487275" # aip test 3, PASS
-##    testDOI = "10.1088/1757-899X/73/1/012015" # iop test 1 PASS
-    testDOI = "10.1016/j.jcis.2017.02.001"
+    testDOI = "10.1088/1757-899X/73/1/012015" # iop test 1 PASS
+##    testDOI = "10.1016/j.jcis.2017.02.001"
     testDict = mainDOI(testDOI)
     for key in testDict:
         print key + " : " + str(testDict[key])
