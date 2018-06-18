@@ -5,6 +5,7 @@ import mechanize
 import ast
 import collections
 from datetime import date # for logging the Date of Citation
+from doiquery import runDOIquery # query
 ### This script is used to retrieve meta datas based on the input doi string.
 ### Different publisher have different meta data format embedded in their sites,
 ### Based on the publisher, we will determine our way to collect meta datas.
@@ -1230,6 +1231,9 @@ def nameLastFirst(nameList):
 
 # main function, input doi string, output meta data in a dictionary
 def mainDOI(doi):
+    queryDict = runDOIquery(doi)
+    if len(queryDict) > 0:
+        return queryDict
     url = doiToURL(doi)
     (url, publisher) = fetchRdrctURLPub(url)
     txt = fetchTxtByURL(url)
