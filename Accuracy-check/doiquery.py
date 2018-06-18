@@ -24,10 +24,10 @@ def runDOIquery(doi):
     # CitationType
     citeType = root.find('.//crossref/').tag
     if citeType == 'conference':
-        metaList = [('CitationType', 'conference proceeding')]
+        metaList = [('CitationType', ['conference proceeding'])]
         metaList = conference(root, metaList)
     elif citeType == 'journal':
-        metaList = [('CitationType', 'research article')]
+        metaList = [('CitationType', ['research article'])]
         metaList = journal(root, metaList)
     metaDict = collections.OrderedDict(metaList)
     return metaDict
@@ -38,10 +38,10 @@ def testrun(xml):
     # CitationType
     citeType = root.find('.//crossref/').tag
     if citeType == 'conference':
-        metaList = [('CitationType', 'conference proceeding')]
+        metaList = [('CitationType', ['conference proceeding'])]
         metaList = conference(root, metaList)
     elif citeType == 'journal':
-        metaList = [('CitationType', 'research article')]
+        metaList = [('CitationType', ['research article'])]
         metaList = journal(root, metaList)
     metaDict = collections.OrderedDict(metaList)
     return metaDict
@@ -51,11 +51,11 @@ def journal(root, metaList):
     # Publication
     temp = root.find('.//journal_metadata/full_title')
     if temp is not None:
-        metaList.append(('Publication', temp.text))
+        metaList.append(('Publication', [temp.text]))
     # Title
     temp = root.find('.//journal_article/titles/title')
     if temp is not None:
-        metaList.append(('Title', temp.text))
+        metaList.append(('Title', [temp.text]))
     # Author
     temp = root.findall('.//person_name')
     authors = []
@@ -82,27 +82,27 @@ def journal(root, metaList):
     if temp is not None and 'owner' in temp.attrib.keys():
         owner = temp.attrib['owner']
         if owner in publisher.keys():
-            metaList.append(('Publisher', publisher[owner]))
+            metaList.append(('Publisher', [publisher[owner]]))
     # PublicationYear
     temp = root.find('.//journal_issue/publication_date/year')
     if temp is not None:
-        metaList.append(('PublicationYear', temp.text))
+        metaList.append(('PublicationYear', [temp.text]))
     # DOI
     temp = root.find('.//journal_article/doi_data/doi')
     if temp is None:
         temp = root.find('.//doi_data/doi')
         if temp is not None:
-            metaList.append(('DOI', temp.text))
+            metaList.append(('DOI', [temp.text]))
     else:
         metaList.append(('DOI', temp.text))
     # Volume
     temp = root.find('.//journal_volume/volume')
     if temp is not None:
-        metaList.append(('Volume', temp.text))
+        metaList.append(('Volume', [temp.text]))
     # URL
     temp = root.find('.//journal_article/doi_data/resource')
     if temp is not None:
-        metaList.append(('URL', temp.text))
+        metaList.append(('URL', [temp.text]))
     # Language
     ISO639 = {'en':'English', 'zh':'Chinese', 'de':'German', 'ja':'Japanese',
               'es':'Spanish', 'nl':'Dutch', 'cs':'Czech', 'da':'Danish',
@@ -111,9 +111,9 @@ def journal(root, metaList):
     temp = root.find('.//journal_metadata')
     if temp is not None and 'language' in temp.attrib.keys():
         if temp.attrib['language'] not in ISO639.keys():
-            metaList.append(('Language', temp.attrib['language']))
+            metaList.append(('Language', [temp.attrib['language']]))
         else:
-            metaList.append(('Language', ISO639[temp.attrib['language']]))
+            metaList.append(('Language', [ISO639[temp.attrib['language']]]))
     # Institution
     tempList = root.findall('.//journal_article/contributors/person_name[@sequence="first"]/affiliation')
     affList = [] # init
@@ -121,26 +121,26 @@ def journal(root, metaList):
         affList.append(ele.text)
     if len(affList) > 0:
         if len(affList) == 1: # one affiliation
-            metaList.append(('Institution', affList[0]))
+            metaList.append(('Institution', [affList[0]]))
         elif ',' in affList[0]: # multiple affiliations
-            metaList.append(('Institution', affList[0]))
+            metaList.append(('Institution', [affList[0]]))
         else: # segmented affiliation
-            metaList.append(('Institution', string.join(affList,', ')))
+            metaList.append(('Institution', [string.join(affList,', ')]))
     # DateOfCitation
     if len(metaList) > 0:
-        metaList.append(('DateOfCitation', date.today().isoformat()))
+        metaList.append(('DateOfCitation', [date.today().isoformat()]))
     # ISSN
     issn_e = root.findall('.//issn[@media_type="electronic"]')
     issn_ep = root.findall('.//issn')
     if len(issn_e) < 1:
         if len(issn_ep) >= 1:
-            metaList.append(('ISSN', issn_ep[0].text))
+            metaList.append(('ISSN', [issn_ep[0].text]))
     else:
-        metaList.append(('ISSN', issn_e[0].text))
+        metaList.append(('ISSN', [issn_e[0].text]))
     # Issue
     temp = root.find('.//journal_issue/issue')
     if temp is not None:
-        metaList.append(('Issue', temp.text))
+        metaList.append(('Issue', [temp.text]))
     return metaList
 
 ## Conference
@@ -148,11 +148,11 @@ def conference(root, metaList):
     # Publication
     temp = root.find('.//event_metadata/conference_name')
     if temp is not None:
-        metaList.append(('Publication', temp.text))
+        metaList.append(('Publication', [temp.text]))
     # Title
     temp = root.find('.//conference_paper/titles/title')
     if temp is not None:
-        metaList.append(('Title', temp.text))
+        metaList.append(('Title', [temp.text]))
     # Author
     temp = root.findall('.//person_name')
     authors = []
@@ -179,19 +179,19 @@ def conference(root, metaList):
     if temp is not None and 'owner' in temp.attrib.keys():
         owner = temp.attrib['owner']
         if owner in publisher.keys():
-            metaList.append(('Publisher', publisher[owner]))
+            metaList.append(('Publisher', [publisher[owner]]))
     # PublicationYear
     temp = root.find('.//publication_date/year')
     if temp is not None:
-        metaList.append(('PublicationYear', temp.text))
+        metaList.append(('PublicationYear', [temp.text]))
     # DOI
     temp = root.find('.//doi_data/doi')
     if temp is not None:
-        metaList.append(('DOI', temp.text))
+        metaList.append(('DOI', [temp.text]))
     # URL
     temp = root.find('.//doi_data/resource')
     if temp is not None:
-        metaList.append(('URL', temp.text))
+        metaList.append(('URL', [temp.text]))
     # Language
     ISO639 = {'en':'English', 'zh':'Chinese', 'de':'German', 'ja':'Japanese',
               'es':'Spanish', 'nl':'Dutch', 'cs':'Czech', 'da':'Danish',
@@ -200,9 +200,9 @@ def conference(root, metaList):
     temp = root.find('.//proceedings_metadata')
     if temp is not None and 'language' in temp.attrib.keys():
         if temp.attrib['language'] not in ISO639.keys():
-            metaList.append(('Language', temp.attrib['language']))
+            metaList.append(('Language', [temp.attrib['language']]))
         else:
-            metaList.append(('Language', ISO639[temp.attrib['language']]))
+            metaList.append(('Language', [ISO639[temp.attrib['language']]]))
     # Institution
     tempList = root.findall('.//conference_paper/contributors/person_name[@sequence="first"]/affiliation')
     affList = [] # init
@@ -210,12 +210,12 @@ def conference(root, metaList):
         affList.append(ele.text)
     if len(affList) > 0:
         if len(affList) == 1: # one affiliation
-            metaList.append(('Institution', affList[0]))
+            metaList.append(('Institution', [affList[0]]))
         elif ',' in affList[0]: # multiple affiliations
-            metaList.append(('Institution', affList[0]))
+            metaList.append(('Institution', [affList[0]]))
         else: # segmented affiliation
-            metaList.append(('Institution', string.join(affList,', ')))
+            metaList.append(('Institution', [string.join(affList,', ')]))
     # DateOfCitation
     if len(metaList) > 0:
-        metaList.append(('DateOfCitation', date.today().isoformat()))
+        metaList.append(('DateOfCitation', [date.today().isoformat()]))
     return metaList
