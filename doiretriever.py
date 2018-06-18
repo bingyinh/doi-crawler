@@ -1236,7 +1236,7 @@ def mainDOI(doi):
         return queryDict
     url = doiToURL(doi)
     (url, publisher) = fetchRdrctURLPub(url)
-    txt = fetchTxtByURL(url)
+    # txt = fetchTxtByURL(url)
     myDict = collectMeta(doi, url, publisher)
     myDict["DateOfCitation"].append(date.today().isoformat())
     # extract year from date
