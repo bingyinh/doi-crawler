@@ -60,7 +60,13 @@ def journal(root, metaList):
     temp = root.findall('.//person_name')
     authors = []
     for person in temp:
-        authors.append(person.find('surname').text + ', ' + person.find('given_name').text)
+        if person.find('given_name') is not None:
+            authors.append(person.find('surname').text + ', ' + person.find('given_name').text)
+        else:
+            full_name = person.find('surname').text
+            surname = full_name.split(' ')[-1]
+            given_name = full_name[:full_name.find(surname)].strip()
+            authors.append(surname + ',' + given_name)
     if len(authors) > 0:
         metaList.append(('Author', authors))
     # Publisher
@@ -157,7 +163,13 @@ def conference(root, metaList):
     temp = root.findall('.//person_name')
     authors = []
     for person in temp:
-        authors.append(person.find('surname').text + ', ' + person.find('given_name').text)
+        if person.find('given_name') is not None:
+            authors.append(person.find('surname').text + ', ' + person.find('given_name').text)
+        else:
+            full_name = person.find('surname').text
+            surname = full_name.split(' ')[-1]
+            given_name = full_name[:full_name.find(surname)].strip()
+            authors.append(surname + ',' + given_name)
     if len(authors) > 0:
         metaList.append(('Author', authors))
     # Publisher
