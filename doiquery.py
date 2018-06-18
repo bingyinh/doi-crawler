@@ -66,7 +66,7 @@ def journal(root, metaList):
             full_name = person.find('surname').text
             surname = full_name.split(' ')[-1]
             given_name = full_name[:full_name.find(surname)].strip()
-            authors.append(surname + ',' + given_name)
+            authors.append(surname + ', ' + given_name)
     if len(authors) > 0:
         metaList.append(('Author', authors))
     # Publisher
