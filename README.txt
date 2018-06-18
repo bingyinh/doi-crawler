@@ -23,6 +23,9 @@ Required packages:
 >>> ast
     Python default package
     Used here to turn a string expression into a dictionary
+>>> collections
+    Python default package
+    Used here to save the metadata results in an OrderedDict()
 >>> datetime
     Python default package
     Used here to log in the date of citation
