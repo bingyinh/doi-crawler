@@ -921,14 +921,15 @@ def iopMeta(soup, doi, url):
         if ("href" in tagA.attrs):
             if ('''/author/''' in tagA["href"]):
                 outputDict["Author"].append(tagA.string.strip())
-    # Institution    
+    # Institution
+    inst = []
     tagDivs = soup.find_all("div")
     for tagDiv in tagDivs:
         if ("class" in tagDiv.attrs):
             if ("affiliations" in str(tagDiv["class"])):
                 inst = tagDiv # save the right <div></div> pair
     # each institution is saved in tag p
-    insts = inst.find_all("p")
+    insts = inst.find_all("p") if type(inst) != list else []
     # loop through all institutions
     for institution in insts:
         # convert to string
@@ -1297,7 +1298,7 @@ if __name__ == "__main__":
 ##    testDOI = "10.1063/1.3487275" # aip test 3, PASS
     testDOI = "10.1088/1757-899X/73/1/012015" # iop test 1 PASS
 ##    testDOI = "10.1016/j.jcis.2017.02.001"
-    testDict = mainDOI(testDOI)
+    testDict = mainDOIsoupFirst(testDOI)
     for key in testDict:
         print key + " : " + str(testDict[key])
         print "==============================================="
