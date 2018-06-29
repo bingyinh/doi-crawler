@@ -1232,6 +1232,8 @@ def nameLastFirst(nameList):
 
 # main function, input doi string, output meta data in a dictionary
 def mainDOI(doi):
+    if not doiValid(doi):
+        return {}
     queryDict = runDOIquery(doi)
     if len(queryDict) > 0:
         return queryDict
@@ -1255,6 +1257,8 @@ def mainDOI(doi):
 # main function, input doi string, output meta data in a dictionary, use bs4
 # module first
 def mainDOIsoupFirst(doi):
+    if not doiValid(doi):
+        return {}
     url = doiToURL(doi)
     (url, publisher) = fetchRdrctURLPub(url)
     # txt = fetchTxtByURL(url)
@@ -1271,6 +1275,12 @@ def mainDOIsoupFirst(doi):
     queryDict = runDOIquery(doi)
     myDict.update(queryDict) # update dict by bs4 module with query dict
     return myDict
+
+# avoid Http 404 when users input invalid doi
+def doiValid(doi):
+    if len(runDOIquery(doi)) == 0:
+        return False
+    return True
 
 if __name__ == "__main__":
 ##    testDOI = "10.1002/adfm.200700200" # wiley test 1 PASS
