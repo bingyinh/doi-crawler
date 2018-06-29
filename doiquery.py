@@ -100,7 +100,7 @@ def journal(root, metaList):
         if temp is not None:
             metaList.append(('DOI', [temp.text]))
     else:
-        metaList.append(('DOI', temp.text))
+        metaList.append(('DOI', [temp.text]))
     # Volume
     temp = root.find('.//journal_volume/volume')
     if temp is not None:

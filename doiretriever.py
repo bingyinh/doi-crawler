@@ -1191,11 +1191,11 @@ def getMetaFromSoup(metas, name):
 # initialize a dictionary to map all meta datas
 # DOI is loaded into the dictionary at the time of creation
 def makeMetaDict(doi):
-    pairs = [("Publication", []), ("Title", []), ("Author", []), ("Keyword", []), 
-             ("Publisher", []), ("PublicationYear", []), ("DOI", [unicode(doi)]), 
-             ("Volume", []), ("URL", []), ("Language", [u'English']),
-             ("Institution", []), ("DateOfCitation", []),
-             ("ISSN", []), ("Issue", [])]
+    pairs = [("CitationType", []), ("Publication", []), ("Title", []),
+             ("Author", []), ("Keyword", []), ("Publisher", []),
+             ("PublicationYear", []), ("DOI", [unicode(doi)]), ("Volume", []),
+             ("URL", []), ("Language", [u'English']), ("Institution", []),
+             ("DateOfCitation", []), ("ISSN", []), ("Issue", [])]
     metaDict = collections.OrderedDict(pairs) # initialize the dictionary
     return metaDict
 
