@@ -1251,6 +1251,26 @@ def mainDOI(doi):
 ##        print "==============================================="
     return myDict
 
+# main function, input doi string, output meta data in a dictionary, use bs4
+# module first
+def mainDOIsoupFirst(doi):
+    url = doiToURL(doi)
+    (url, publisher) = fetchRdrctURLPub(url)
+    # txt = fetchTxtByURL(url)
+    myDict = collectMeta(doi, url, publisher)
+    myDict["DateOfCitation"].append(date.today().isoformat())
+    # extract year from date
+    if (myDict["PublicationYear"] != []):
+        myDict["PublicationYear"] = [yearFromDate(myDict["PublicationYear"][0])]
+    # replace &amp; with & in Institutions
+    for i in xrange(len(myDict["Institution"])):
+        if "&amp;" in myDict["Institution"][i]:
+            myDict["Institution"][i] = myDict["Institution"][i].replace('&amp;','and')
+    # call query module to fill in the blank
+    queryDict = runDOIquery(doi)
+    myDict.update(queryDict) # update dict by bs4 module with query dict
+    return myDict
+
 if __name__ == "__main__":
 ##    testDOI = "10.1002/adfm.200700200" # wiley test 1 PASS
 ##    testDOI = "10.1002/adma.200401816"
