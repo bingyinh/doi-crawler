@@ -10,6 +10,8 @@ import collections
 from datetime import date
 
 def runDOIquery(doi):
+    if '+' in doi:
+        doi = doi.replace('+', '%2B')
     # read the credentials
     with open('account.txt') as f:
         account = f.read()
@@ -84,7 +86,8 @@ def journal(root, metaList):
                  '10.1109':'IEEE',
                  '10.1557':'Cambridge University Press',
                  '10.2514':'American Institute of Aeronautics and Astronautics',
-                 '10.3390':'Molecular Diversity Preservation International'}
+                 '10.3390':'Molecular Diversity Preservation International',
+                 '10.3144':'Budapest University of Technology and Economics, Dept. of Polymer Engineering'}
     if temp is not None and 'owner' in temp.attrib.keys():
         owner = temp.attrib['owner']
         if owner in publisher.keys():
@@ -187,7 +190,8 @@ def conference(root, metaList):
                  '10.1109':'IEEE',
                  '10.1557':'Cambridge University Press',
                  '10.2514':'American Institute of Aeronautics and Astronautics',
-                 '10.3390':'Molecular Diversity Preservation International'}
+                 '10.3390':'Molecular Diversity Preservation International',
+                 '10.3144':'Budapest University of Technology and Economics, Dept. of Polymer Engineering'}
     if temp is not None and 'owner' in temp.attrib.keys():
         owner = temp.attrib['owner']
         if owner in publisher.keys():
