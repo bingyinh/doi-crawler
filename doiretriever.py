@@ -403,11 +403,11 @@ def elsevierMeta(soup, txt, doi, url):
                 author_lname.append(tagSpan.string)
     
     # put them into outputDict
-    assert(len(author_fname) == len(author_lname))
-    for x in xrange(len(author_fname)):
-        outputDict["Author"].append(author_fname[x] + " " + author_lname[x])
-    # now eliminate duplicate names
-    outputDict["Author"] = noDup(outputDict["Author"])
+    if len(author_fname) == len(author_lname):
+        for x in xrange(len(author_fname)):
+            outputDict["Author"].append(author_fname[x] + " " + author_lname[x])
+        # now eliminate duplicate names
+        outputDict["Author"] = noDup(outputDict["Author"])
 
     # Institution
     # to avoid including editor's institution, find institution info after the
