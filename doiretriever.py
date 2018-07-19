@@ -1263,7 +1263,6 @@ def mainDOIsoupFirst(doi):
     if not doiValid(doi):
         return {}
     url = doiToURL(doi)
-    print url
     (url, publisher) = fetchRdrctURLPub(url)
     # txt = fetchTxtByURL(url)
     myDict = collectMeta(doi, url, publisher)
