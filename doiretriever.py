@@ -6,6 +6,7 @@ import ast
 import collections
 from datetime import date # for logging the Date of Citation
 from doiquery import runDOIquery # query
+from urllib import quote_plus
 ### This script is used to retrieve meta datas based on the input doi string.
 ### Different publisher have different meta data format embedded in their sites,
 ### Based on the publisher, we will determine our way to collect meta datas.
@@ -139,7 +140,7 @@ general  = {"Publication": ["citation_journal_title", "prism.publicationName"],
 # input a string of doi, output the url
 def doiToURL(doi):
     assert(type(doi) == str or type(doi) == unicode)
-    url = "https://doi.org/" + doi
+    url = "http://doi.org/" + doi
     # exception for t&f publishing:
     # International Journal of Smart and Nano Materials
     # doi link for this journal doesn't work properly
@@ -1232,6 +1233,7 @@ def nameLastFirst(nameList):
 
 # main function, input doi string, output meta data in a dictionary
 def mainDOI(doi):
+    doi = quote_plus(doi)
     if not doiValid(doi):
         return {}
     queryDict = runDOIquery(doi)
@@ -1257,9 +1259,11 @@ def mainDOI(doi):
 # main function, input doi string, output meta data in a dictionary, use bs4
 # module first
 def mainDOIsoupFirst(doi):
+    doi = quote_plus(doi)
     if not doiValid(doi):
         return {}
     url = doiToURL(doi)
+    print url
     (url, publisher) = fetchRdrctURLPub(url)
     # txt = fetchTxtByURL(url)
     myDict = collectMeta(doi, url, publisher)
@@ -1306,8 +1310,10 @@ if __name__ == "__main__":
 ##    testDOI = "10.1063/1.4960137"
 ##    testDOI = "10.1038/nnano.2008.96"
 ##    testDOI = "10.1063/1.3487275" # aip test 3, PASS
-    testDOI = "10.1088/1757-899X/73/1/012015" # iop test 1 PASS
+##    testDOI = "10.1088/1757-899X/73/1/012015" # iop test 1 PASS
 ##    testDOI = "10.1016/j.jcis.2017.02.001"
+##    testDOI = "10.1002/(SICI)1097-4628(19991003)74:1<133::AID-APP16>3.0.CO;2-N"
+    testDOI = "10.1021/ma060125+"
     testDict = mainDOIsoupFirst(testDOI)
     for key in testDict:
         print key + " : " + str(testDict[key])

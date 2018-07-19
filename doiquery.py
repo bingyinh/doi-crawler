@@ -10,8 +10,6 @@ import collections
 from datetime import date
 
 def runDOIquery(doi):
-    if '+' in doi:
-        doi = doi.replace('+', '%2B')
     # read the credentials
     with open('account.txt') as f:
         account = f.read()
