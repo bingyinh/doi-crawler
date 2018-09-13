@@ -1,13 +1,13 @@
 # DOI meta-data retriever
 
-## By Bingyin Hu
+By Bingyin Hu
 
 Designed for publishing groups including:
 Wiley, RSC, AIP, ACS, APS, Nature, Taylor & Francis, Springer, Sage, AIAA, MDPI,
 IOP. Also compatible for other publishing groups whose websites follow standard 
 meta info formatting.
 
-1. System preparation
+### 1. System preparation
 
 Required packages:
 
@@ -39,7 +39,7 @@ Open the command or terminal and run
 pip install -r requirements.txt
 ```
 
-2. How to use
+### 2. How to use
 
 In python environment:
 ```
@@ -50,7 +50,7 @@ output = mainDOI(doi)
 then the information will be saved in a dictionary, returned, and get by output.
 
 
-3. Others
+### 3. Others
 
 Checklist for adding a new journal site if it cannot be queried from CrossRef:
 - add a default dictionary with the mapping of meta data names
