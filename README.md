@@ -1,11 +1,12 @@
-DOI meta-data retriever
-By Bingyin Hu
-==========================================================================
+# DOI meta-data retriever
+
+## By Bingyin Hu
+
 Designed for publishing groups including:
 Wiley, RSC, AIP, ACS, APS, Nature, Taylor & Francis, Springer, Sage, AIAA, MDPI,
 IOP. Also compatible for other publishing groups whose websites follow standard 
 meta info formatting.
-==========================================================================
+
 1. System preparation
 
 Required packages:
@@ -34,18 +35,18 @@ Required packages:
       - Used here to log in the date of citation
 
 Open the command or terminal and run
-'''
+```
 pip install -r requirements.txt
-'''
+```
 
 2. How to use
 
 In python environment:
-'''
+```
 from doiretriever import mainDOI
 doi = "10.1021/acsmacrolett.7b00603"
 output = mainDOI(doi)
-'''
+```
 then the information will be saved in a dictionary, returned, and get by output.
 
 
