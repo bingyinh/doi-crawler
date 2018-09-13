@@ -11,28 +11,28 @@ meta info formatting.
 
 Required packages:
 
-    - Beautiful Soup 4
-      - doc: https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html
+- Beautiful Soup 4
+  - doc: https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html
     
-    - os
-      - Python default package
+- os
+  - Python default package
 
-    - mechanize
-      - https://github.com/sparklemotion/mechanize
-      - "Mechanize is a ruby library that makes automated web interaction easy."
-      - Used here to fetch information from websites.
+- mechanize
+  - https://github.com/sparklemotion/mechanize
+  - "Mechanize is a ruby library that makes automated web interaction easy."
+  - Used here to fetch information from websites.
 
-    - ast
-      - Python default package
-      - Used here to turn a string expression into a dictionary
+- ast
+  - Python default package
+  - Used here to turn a string expression into a dictionary
 
-    - collections
-      - Python default package
-      - Used here to save the metadata results in an OrderedDict()
+- collections
+  - Python default package
+  - Used here to save the metadata results in an OrderedDict()
 
-    - datetime
-      - Python default package
-      - Used here to log in the date of citation
+- datetime
+  - Python default package
+  - Used here to log in the date of citation
 
 Open the command or terminal and run
 ```
