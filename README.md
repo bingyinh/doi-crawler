@@ -62,23 +62,19 @@ Checklist for adding a new journal site if it cannot be queried from CrossRef:
 
 ==========================================================================
 
-09/28/2017
-Tests passed for Wiley and RSC journal papers.
-09/29/2017
-Tests passed for Elsevier journal papers.
-09/30/2017
-Tests passed for AIP and APS journal papers.
-10/01/2017
-Tests passed for ACS journal papers and IEEE journal and conference papers.
-10/02/2017
-Tests passed for Nature, Springer, T&F, Sage, AIAA journal papers and MDPI
-logged papers.
-02/22/2018
-Tests passed for IOP Publishing, AIP modules are updated according to a recent
-update of the website formatting.
-06/18/2018
-A query layer is added before the bs4 module works. The CrossRef Query Services 
-is utilized through OpenURL to fetch the doi metadata much faster than the
-previous bs4 module. 
+09/28/2017: Tests passed for Wiley and RSC journal papers.
+
+09/29/2017: Tests passed for Elsevier journal papers.
+
+09/30/2017: Tests passed for AIP and APS journal papers.
+
+10/01/2017: Tests passed for ACS journal papers and IEEE journal and conference papers.
+
+10/02/2017: Tests passed for Nature, Springer, T&F, Sage, AIAA journal papers and MDPI logged papers.
+
+02/22/2018: Tests passed for IOP Publishing, AIP modules are updated according to a recent update of the website formatting.
+
+06/18/2018: A query layer is added before the bs4 module works. The CrossRef Query Services  is utilized through OpenURL to fetch the doi metadata much faster than the previous bs4 module. 
+
 Note: Keywords are not available through query. Affiliations might not be 
       fetchable in some cases.
