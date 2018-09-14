@@ -41,11 +41,17 @@ pip install -r requirements.txt
 
 ### 2. How to use
 
+Apply for an account at https://apps.crossref.org/requestaccount/ for the Crossref Query Services and save the email address in `account.txt` as required by the DOI query module.
+
 In python environment:
 ```
 from doiretriever import mainDOI
 doi = "10.1021/acsmacrolett.7b00603"
 output = mainDOI(doi)
+```
+or
+```
+output = mainDOISoupFirst(doi)
 ```
 then the information will be saved in a dictionary, returned, and get by output.
 
