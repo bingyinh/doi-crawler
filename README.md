@@ -1,4 +1,4 @@
-# DOI meta-data retriever
+# DOI meta-data retriever (python 3)
 
 By Bingyin Hu
 
@@ -11,16 +11,12 @@ meta info formatting.
 
 Required packages:
 
-- Beautiful Soup 4
-  - doc: https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html
+- MechanicalSoup
+  - https://mechanicalsoup.readthedocs.io/en/stable/
+  - A python3 alternative for mechanize and Beautiful Soup 4.
     
 - os
   - Python default package
-
-- mechanize
-  - https://github.com/sparklemotion/mechanize
-  - "Mechanize is a ruby library that makes automated web interaction easy."
-  - Used here to fetch information from websites.
 
 - ast
   - Python default package
