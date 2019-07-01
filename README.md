@@ -14,7 +14,10 @@ Required packages:
 - MechanicalSoup
   - https://mechanicalsoup.readthedocs.io/en/stable/
   - A python3 alternative for mechanize and Beautiful Soup 4.
-    
+
+- Beautiful Soup 4
+  - https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html
+        
 - os
   - Python default package
 
