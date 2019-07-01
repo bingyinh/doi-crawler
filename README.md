@@ -85,3 +85,5 @@ Checklist for adding a new journal site if it cannot be queried from CrossRef:
 
 Note: Keywords are not available through query. Affiliations might not be 
       fetchable in some cases.
+
+07/01/2019: The whole project is modified to use python 3.
